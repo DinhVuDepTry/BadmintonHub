@@ -1,0 +1,23 @@
+@model IReadOnlyList<BadmintonHub.ViewModels.BookingResponseDto>
+@{ ViewData["Title"] = "Lịch đặt sân"; }
+
+<h1>Lịch đặt sân</h1>
+<a class="btn btn-primary mb-3" asp-action="Create">Đặt sân mới</a>
+
+<table class="table">
+    <thead>
+        <tr><th>Sân</th><th>Ngày</th><th>Giờ</th><th>Trạng thái</th><th>Giá</th></tr>
+    </thead>
+    <tbody>
+    @foreach (var b in Model)
+    {
+        <tr>
+            <td>@b.CourtName</td>
+            <td>@b.BookingDate.ToString("dd/MM/yyyy")</td>
+            <td>@b.StartTime - @b.EndTime</td>
+            <td>@b.Status</td>
+            <td>@b.TotalPrice.ToString("N0") đ</td>
+        </tr>
+    }
+    </tbody>
+</table>

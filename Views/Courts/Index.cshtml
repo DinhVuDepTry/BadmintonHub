@@ -1,0 +1,22 @@
+@model IReadOnlyList<BadmintonHub.ViewModels.CourtResponseDto>
+@{ ViewData["Title"] = "Danh sách sân"; }
+
+<h1>Danh sách sân</h1>
+
+<table class="table">
+    <thead>
+        <tr><th>Mã sân</th><th>Tên sân</th><th>Loại</th><th>Giá/giờ</th><th>Trạng thái</th></tr>
+    </thead>
+    <tbody>
+    @foreach (var c in Model)
+    {
+        <tr>
+            <td>@c.CourtCode</td>
+            <td>@c.CourtName</td>
+            <td>@c.CourtType</td>
+            <td>@c.PricePerHour.ToString("N0") đ</td>
+            <td>@c.Status</td>
+        </tr>
+    }
+    </tbody>
+</table>

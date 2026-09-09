@@ -1,0 +1,31 @@
+@model BadmintonHub.ViewModels.BookingCreateDto
+@{ ViewData["Title"] = "Đặt sân"; }
+
+<h1>Đặt sân</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label class="form-label">Sân</label>
+        <select asp-for="CourtId" class="form-select">
+            @foreach (var c in (IEnumerable<BadmintonHub.ViewModels.CourtResponseDto>)ViewBag.Courts)
+            {
+                <option value="@c.CourtId">@c.CourtName (@c.PricePerHour.ToString("N0") đ/giờ)</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Ngày</label>
+        <input asp-for="BookingDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Giờ bắt đầu</label>
+        <input asp-for="StartTime" type="time" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Giờ kết thúc</label>
+        <input asp-for="EndTime" type="time" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Đặt sân</button>
+</form>
