@@ -26,11 +26,17 @@ public class BookingsApiController(
     }
 
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<BookingResponseDto>> GetById(long id, CancellationToken ct)
-    {
-        var item = await bookingService.GetByIdAsync(id, ct);
-        return item is null ? NotFound() : Ok(item);
-    }
+public async Task<ActionResult<BookingResponseDto>> GetById(long id, CancellationToken ct)
+{
+    var item = await bookingService.GetByIdAsync(id, ct);
+    if (item is null) return NotFound();
+
+    var isAdmin = User.IsInRole("Admin");
+    var userId = userManager.GetUserId(User);
+    if (!isAdmin && item.CustomerId != userId) return Forbid();
+
+    return Ok(item);
+}
 
     // POST api/bookings -> chỉ Customer đặt sân cho chính mình
     [HttpPost]

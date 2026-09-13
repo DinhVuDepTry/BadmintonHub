@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BadmintonHub.Models.Enums;
 
 namespace BadmintonHub.ViewModels;
 
@@ -16,7 +17,7 @@ public class CourtCreateDto
     [Range(0, double.MaxValue)]
     public decimal PricePerHour { get; set; }
 
-    public string Status { get; set; } = "ACTIVE";
+    public CourtStatus Status { get; set; } = CourtStatus.Active;
 }
 
 public sealed class CourtUpdateDto : CourtCreateDto { }
@@ -27,4 +28,4 @@ public record CourtResponseDto(
     string CourtName,
     string CourtType,
     decimal PricePerHour,
-    string Status);
+    CourtStatus Status);

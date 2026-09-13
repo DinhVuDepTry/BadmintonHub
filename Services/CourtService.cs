@@ -33,7 +33,7 @@ public sealed class CourtService(AppDbContext db) : ICourtService
             CourtName = dto.CourtName.Trim(),
             CourtType = dto.CourtType.Trim().ToUpperInvariant(),
             PricePerHour = dto.PricePerHour,
-            Status = dto.Status.Trim().ToUpperInvariant()
+            Status = dto.Status // trực tiếp gán enum, không cần .ToUpperInvariant() vì không phải string nữa
         };
 
         db.Courts.Add(entity);
@@ -55,7 +55,7 @@ public sealed class CourtService(AppDbContext db) : ICourtService
         entity.CourtName = dto.CourtName.Trim();
         entity.CourtType = dto.CourtType.Trim().ToUpperInvariant();
         entity.PricePerHour = dto.PricePerHour;
-        entity.Status = dto.Status.Trim().ToUpperInvariant();
+        entity.Status = dto.Status;
 
         await db.SaveChangesAsync(ct);
         return new CourtResponseDto(entity.CourtId, entity.CourtCode, entity.CourtName,

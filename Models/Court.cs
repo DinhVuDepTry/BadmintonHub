@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using BadmintonHub.Models.Enums;
 namespace BadmintonHub.Models;
 
 [Table("court")]
@@ -21,8 +21,8 @@ public class Court
     [Column("price_per_hour")]
     public decimal PricePerHour { get; set; }
 
-    [Required, MaxLength(20), Column("status")]
-    public string Status { get; set; } = "ACTIVE"; // ACTIVE | MAINTENANCE | INACTIVE
+    [Column("status")]
+public CourtStatus Status { get; set; } = CourtStatus.Active;
 
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }

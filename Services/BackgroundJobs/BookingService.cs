@@ -33,44 +33,50 @@ public sealed class BookingService(AppDbContext db) : IBookingService
                 b.Status.ToString(), b.TotalPrice))
             .SingleOrDefaultAsync(ct);
 
-    public async Task<BookingResponseDto> CreateAsync(
-        string customerId, BookingCreateDto dto, CancellationToken ct)
+  public async Task<BookingResponseDto> CreateAsync(
+    string customerId, BookingCreateDto dto, CancellationToken ct)
+{
+    var court = await db.Courts.FindAsync([dto.CourtId], ct)
+        ?? throw new KeyNotFoundException("Court does not exist.");
+
+    if (dto.EndTime <= dto.StartTime)
+        throw new InvalidOperationException("End time must be after start time.");
+
+    await using var transaction = await db.Database.BeginTransactionAsync(ct);
+
+    // Lock các booking cùng court+date để tránh race condition
+    bool overlap = await db.Bookings
+        .FromSqlInterpolated($@"
+            SELECT * FROM booking
+            WHERE court_id = {dto.CourtId}
+              AND booking_date = {dto.BookingDate}
+              AND status IN (0, 1)
+            FOR UPDATE")
+        .AnyAsync(b => dto.StartTime < b.EndTime && dto.EndTime > b.StartTime, ct);
+
+    if (overlap)
+        throw new InvalidOperationException("This court is already booked for the selected time.");
+
+    var hours = (decimal)(dto.EndTime - dto.StartTime).TotalHours;
+
+    var entity = new Booking
     {
-        var court = await db.Courts.FindAsync([dto.CourtId], ct)
-            ?? throw new KeyNotFoundException("Court does not exist.");
+        CourtId = dto.CourtId,
+        CustomerId = customerId,
+        BookingDate = dto.BookingDate,
+        StartTime = dto.StartTime,
+        EndTime = dto.EndTime,
+        Status = BookingStatus.Pending,
+        TotalPrice = hours * court.PricePerHour,
+        CreatedAt = DateTime.UtcNow
+    };
 
-        if (dto.EndTime <= dto.StartTime)
-            throw new InvalidOperationException("End time must be after start time.");
+    db.Bookings.Add(entity);
+    await db.SaveChangesAsync(ct);
+    await transaction.CommitAsync(ct);
 
-        // Check trùng lịch: cùng sân, cùng ngày, giờ giao nhau, đang Pending/Confirmed
-        bool overlap = await db.Bookings.AnyAsync(b =>
-            b.CourtId == dto.CourtId &&
-            b.BookingDate == dto.BookingDate &&
-            (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Confirmed) &&
-            dto.StartTime < b.EndTime && dto.EndTime > b.StartTime, ct);
-
-        if (overlap)
-            throw new InvalidOperationException("This court is already booked for the selected time.");
-
-        var hours = (decimal)(dto.EndTime - dto.StartTime).TotalHours;
-
-        var entity = new Booking
-        {
-            CourtId = dto.CourtId,
-            CustomerId = customerId,
-            BookingDate = dto.BookingDate,
-            StartTime = dto.StartTime,
-            EndTime = dto.EndTime,
-            Status = BookingStatus.Pending,
-            TotalPrice = hours * court.PricePerHour,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        db.Bookings.Add(entity);
-        await db.SaveChangesAsync(ct);
-
-        return (await GetByIdAsync(entity.BookingId, ct))!;
-    }
+    return (await GetByIdAsync(entity.BookingId, ct))!;
+}
 
     public async Task<bool> CancelAsync(long id, string customerId, CancellationToken ct)
     {
