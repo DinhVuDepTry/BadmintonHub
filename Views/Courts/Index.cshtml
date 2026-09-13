@@ -3,20 +3,45 @@
 
 <h1>Danh sách sân</h1>
 
-<table class="table">
-    <thead>
-        <tr><th>Mã sân</th><th>Tên sân</th><th>Loại</th><th>Giá/giờ</th><th>Trạng thái</th></tr>
-    </thead>
-    <tbody>
-    @foreach (var c in Model)
-    {
-        <tr>
-            <td>@c.CourtCode</td>
-            <td>@c.CourtName</td>
-            <td>@c.CourtType</td>
-            <td>@c.PricePerHour.ToString("N0") đ</td>
-            <td>@c.Status</td>
-        </tr>
-    }
-    </tbody>
-</table>
+@if (User.IsInRole("Admin"))
+{
+    <a class="btn btn-primary mb-3" asp-action="Create">+ Thêm sân</a>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Chưa có sân nào.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr><th>Mã sân</th><th>Tên sân</th><th>Loại</th><th>Giá/giờ</th><th>Trạng thái</th>@if (User.IsInRole("Admin")){<th></th>}</tr>
+        </thead>
+        <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.CourtCode</td>
+                <td>@c.CourtName</td>
+                <td>@c.CourtType</td>
+                <td>@c.PricePerHour.ToString("N0") đ</td>
+                <td>@c.Status</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@c.CourtId" method="post" onsubmit="return confirm('Xóa sân này?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                        </form>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}

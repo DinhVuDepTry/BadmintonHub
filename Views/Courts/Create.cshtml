@@ -1,0 +1,28 @@
+@model BadmintonHub.ViewModels.CourtCreateDto
+@{ ViewData["Title"] = "Thêm sân"; }
+
+<h1>Thêm sân mới</h1>
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label class="form-label">Mã sân</label>
+        <input asp-for="CourtCode" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Tên sân</label>
+        <input asp-for="CourtName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Loại sân</label>
+        <select asp-for="CourtType" class="form-select">
+            <option value="SINGLE">Đơn</option>
+            <option value="DOUBLE">Đôi</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Giá/giờ</label>
+        <input asp-for="PricePerHour" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+</form>
