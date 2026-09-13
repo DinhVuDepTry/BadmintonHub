@@ -28,6 +28,16 @@ public class BookingsController(
     }
 
     [HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Cancel(long id, CancellationToken ct)
+{
+    var userId = userManager.GetUserId(User)!;
+    await bookingService.CancelAsync(id, userId, ct);
+    return RedirectToAction(nameof(Index));
+}
+
+
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(BookingCreateDto dto, CancellationToken ct)
     {
