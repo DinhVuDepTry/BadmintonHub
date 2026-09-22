@@ -6,7 +6,7 @@
 **Mã học phần:** 30INF067  
 **Lớp:** `Điền tên lớp`  
 **Nhóm:** `Điền tên nhóm`  
-**Thành viên:** Đình Văn Vũ, Nguyễn Duy Anh, Nguyễn Minh Hạnh  
+**Thành viên:** Đình Văn Vũ, Nguyễn Duy Anh, Nguyễn Minh Hạnh
 **Giảng viên:** `Điền tên giảng viên`  
 **Ngày nộp:** `23/09/2026`
 
