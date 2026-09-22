@@ -1,0 +1,67 @@
+@page
+@model BadmintonHub.Areas.Identity.Pages.Account.Manage.IndexModel
+@{
+    ViewData["Title"] = "Cài đặt tài khoản";
+}
+
+<section class="settings-heading">
+    <div>
+        <p class="eyebrow dark"><span></span> BADMINTONHUB / ACCOUNT</p>
+        <h1>Quản lý<br /><em>tài khoản.</em></h1>
+        <p class="settings-lead">Cập nhật thông tin cá nhân và bảo mật tài khoản của bạn.</p>
+    </div>
+    <div class="settings-identity">
+        <span class="settings-avatar">@(Model.Profile.FullName.Length > 0 ? Model.Profile.FullName.Substring(0, 1).ToUpperInvariant() : "B")</span>
+        <div><strong>@Model.Profile.FullName</strong><small>@Model.Email</small></div>
+    </div>
+</section>
+
+@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+{
+    <div class="settings-status">@Model.StatusMessage</div>
+}
+
+<div class="settings-layout">
+    <aside class="settings-nav">
+        <span class="settings-nav-label">CÀI ĐẶT</span>
+        <a class="settings-nav-item active" href="#profile">Hồ sơ cá nhân <span>01</span></a>
+        <a class="settings-nav-item" href="#security">Bảo mật <span>02</span></a>
+        <div class="settings-nav-foot"><span>MEMBER SINCE</span><strong>BADMINTONHUB</strong></div>
+    </aside>
+
+    <main class="settings-content">
+        <section class="settings-card" id="profile">
+            <div class="settings-card-head"><div><span class="settings-index">01</span><h2>Thông tin cá nhân</h2></div><span class="settings-card-note">PROFILE</span></div>
+            <p class="settings-card-description">Thông tin này được dùng để nhận diện bạn trong các lịch đặt sân.</p>
+            <form method="post" asp-page-handler="Profile" class="settings-form">
+                <div asp-validation-summary="ModelOnly" class="validation-message"></div>
+                <div class="form-field"><label asp-for="Profile.FullName"></label><input asp-for="Profile.FullName" class="form-control" autocomplete="name" /><span asp-validation-for="Profile.FullName" class="field-error"></span></div>
+                <div class="form-field"><label>Email</label><div class="settings-readonly"><span>@Model.Email</span><small>Email được dùng để đăng nhập</small></div></div>
+                <div class="form-field"><label asp-for="Profile.PhoneNumber"></label><input asp-for="Profile.PhoneNumber" class="form-control" autocomplete="tel" placeholder="Chưa cập nhật" /><span asp-validation-for="Profile.PhoneNumber" class="field-error"></span></div>
+                <button type="submit" class="btn btn-lime">Lưu thông tin <span>↗</span></button>
+            </form>
+        </section>
+
+        <section class="settings-card" id="security">
+            <div class="settings-card-head"><div><span class="settings-index">02</span><h2>Bảo mật tài khoản</h2></div><span class="settings-card-note">SECURITY</span></div>
+            <p class="settings-card-description">Mật khẩu mạnh giúp lịch đặt sân và thông tin cá nhân luôn được bảo vệ.</p>
+            @if (Model.HasPassword)
+            {
+                <form method="post" asp-page-handler="Password" class="settings-form">
+                    <div asp-validation-summary="ModelOnly" class="validation-message"></div>
+                    <div class="form-field"><label asp-for="Password.CurrentPassword"></label><input asp-for="Password.CurrentPassword" class="form-control" autocomplete="current-password" /><span asp-validation-for="Password.CurrentPassword" class="field-error"></span></div>
+                    <div class="settings-password-grid"><div class="form-field"><label asp-for="Password.NewPassword"></label><input asp-for="Password.NewPassword" class="form-control" autocomplete="new-password" /><span asp-validation-for="Password.NewPassword" class="field-error"></span></div><div class="form-field"><label asp-for="Password.ConfirmPassword"></label><input asp-for="Password.ConfirmPassword" class="form-control" autocomplete="new-password" /><span asp-validation-for="Password.ConfirmPassword" class="field-error"></span></div></div>
+                    <button type="submit" class="btn btn-dark-pill">Đổi mật khẩu <span>↗</span></button>
+                </form>
+            }
+            else
+            {
+                <p class="settings-muted">Tài khoản đăng nhập ngoài chưa có mật khẩu cục bộ.</p>
+            }
+        </section>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
