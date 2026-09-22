@@ -1,20 +1,22 @@
-# BadmintonHub — Hệ thống đặt sân cầu lông
+# BadmintonHub - Hệ thống đặt sân cầu lông
 
-Project môn Lập trình Web Nâng Cao (30INF067). Xây dựng bằng ASP.NET Core MVC, EF Core, MySQL, có RBAC thực tế cho Admin/Customer và API riêng cho các thao tác chính.
+Project môn Lập trình Web Nâng Cao (30INF067). Ứng dụng ASP.NET Core MVC/Razor cho một địa điểm cầu lông, hỗ trợ tìm sân trống, đặt sân, xác nhận booking và vận hành Admin.
 
 ## Công nghệ
 
 - .NET 8, ASP.NET Core MVC (Razor Views)
 - EF Core + Pomelo.EntityFrameworkCore.MySql 8.0.3
 - MySQL 8.x
-- ASP.NET Core Identity (RBAC: Admin / Customer)
+- ASP.NET Core Identity Cookie Authentication (RBAC: Admin / Customer)
 - Swagger (Swashbuckle.AspNetCore)
+- Hosted background worker cho vòng đời booking
 
 ## Cách chạy project
 
 ### 1. Yêu cầu
 - .NET SDK 8.0.x
 - MySQL Server 8.x đang chạy
+- EF Core CLI (được restore từ `dotnet-tools.json`)
 
 ### 2. Tạo database và user MySQL
 
@@ -52,8 +54,9 @@ dotnet run
 
 Mở `http://localhost:5176` (hoặc port hiển thị trong terminal khi chạy).
 
-- Swagger (test API): `http://localhost:5176/swagger`
+- Swagger (Development): `http://localhost:5176/swagger`
 - Đăng ký tài khoản: `http://localhost:5176/Identity/Account/Register`
+- Health check: `http://localhost:5176/health`
 
 ## Deploy production bằng Docker
 
@@ -102,7 +105,7 @@ Sau khi reverse proxy cấu hình HTTPS, kiểm tra `https://your-domain.com/hea
 
 Có 2 role đang được sử dụng trong nghiệp vụ: **Admin** và **Customer**. Tài khoản đăng ký mới được tự động gán role `Customer`.
 
-Tài khoản Admin cần được bootstrap riêng trong môi trường triển khai. Không cho phép người dùng tự chọn role khi đăng ký.
+Tài khoản Admin cần được bootstrap riêng trong môi trường triển khai. Không cho phép người dùng tự chọn role khi đăng ký. Với môi trường local/demo, có thể gán Admin thủ công sau khi tạo tài khoản:
 
 ```sql
 SELECT Id FROM aspnetusers WHERE Email = '<email tài khoản>';
@@ -134,6 +137,8 @@ Mọi route MVC và API đều kiểm tra role ở controller; việc kiểm tra
 | POST | `/api/bookings` | Customer | Đặt sân (tự check trùng lịch, trả `409` nếu trùng) |
 | POST | `/api/bookings/{id}/confirm` | Admin | Xác nhận booking `Pending` |
 | DELETE | `/api/bookings/{id}` | Customer sở hữu hoặc Admin | Hủy booking |
+| GET | `/api/security/csrf` | Đã đăng nhập | Cấp CSRF request token cho API cookie-authenticated |
+| GET | `/health` | Public | Kiểm tra trạng thái kết nối database |
 
 Các API `POST`, `PUT`, `DELETE` dùng cookie Identity và yêu cầu CSRF token. Client đã đăng nhập gọi `GET /api/security/csrf`, sau đó gửi token ở header `RequestVerificationToken`.
 
@@ -147,14 +152,14 @@ Các API `POST`, `PUT`, `DELETE` dùng cookie Identity và yêu cầu CSRF token
 | Admin dashboard | `/Admin` | Tổng quan sân, booking và doanh thu trong ngày |
 | Quản lý tài khoản | `/Identity/Account/Manage` | Hồ sơ, bảo mật và trạng thái tài khoản |
 
-## Business rules đã áp dụng
+## Business rules
 
 - Không cho đặt trùng sân + ngày + khung giờ giao nhau với booking đang `Pending`/`Confirmed` (trả `409 Conflict`)
 - Chỉ cho đặt sân đang `Active` và thời gian trong tương lai
 - Không cho hủy booking trong vòng 2 giờ trước giờ bắt đầu
 - Không xóa được sân nếu vẫn còn booking liên quan
 - Giá booking tự tính = số giờ đặt × giá/giờ của sân
-- Background worker tự chuyển booking quá hạn thành `Expired` hoặc `Completed`
+- Background worker chạy mỗi phút, tự chuyển booking quá hạn thành `Expired` hoặc `Completed`
 - Admin có thể xác nhận booking `Pending` thành `Confirmed` qua web hoặc API
 - Admin dashboard tại `/Admin` hiển thị sân đang hoạt động, booking chờ xác nhận, booking hôm nay và doanh thu hôm nay
 - Mọi thao tác ghi (create/update/delete) qua API yêu cầu đăng nhập và đúng role tương ứng (đã kiểm thử `403 Forbidden` khi sai role)
@@ -163,16 +168,18 @@ Các API `POST`, `PUT`, `DELETE` dùng cookie Identity và yêu cầu CSRF token
 
 ```
 BadmintonHub/
-├── Controllers/          # MVC Controllers (Home, Courts, Bookings)
-│   └── Api/               # API Controllers (CourtsApi, BookingsApi)
+├── Controllers/           # MVC Controllers (Home, Courts, Bookings, Admin)
+│   └── Api/               # API Controllers (Courts, Bookings, Security)
 ├── Views/                 # Razor Views
-├── Areas/Identity/         # Identity UI (Login/Register)
+├── Areas/Identity/         # Login, register, reset password, manage account
 ├── Data/                  # AppDbContext
 ├── Models/                # Entities (Court, Booking, ApplicationUser)
-│   └── Enums/              # BookingStatus
+│   └── Enums/             # BookingStatus, CourtStatus
 ├── ViewModels/             # DTOs cho API và Form
-├── Services/               # Business logic (CourtService, BookingService)
+├── Services/               # Business logic, SMTP, background worker
 ├── Migrations/             # EF Core Migrations
+├── Tests/                  # xUnit service tests (excluded from web compile)
+├── docs/                   # Hồ sơ phân tích và thiết kế
 └── Program.cs
 ```
 
@@ -186,7 +193,7 @@ Test hiện bao phủ tìm sân trống, sân không hoạt động, booking gia
 
 ## Hồ sơ phân tích và thiết kế
 
-Bộ hồ sơ phục vụ rubric môn học nằm trong thư mục [docs](docs/README.md), bao gồm cover, requirements, use cases, user stories/acceptance criteria, ERD, system design, sequence/API contract, ADR, threat model/RBAC, traceability matrix, operations và checklist demo.
+Bộ hồ sơ phục vụ rubric môn học bắt đầu tại [cover dossier](docs/00-submission-cover.md), gồm requirements, use cases, user stories/acceptance criteria, ERD, system design, sequence/API contract, ADR, threat model/RBAC, traceability matrix, operations và checklist demo.
 
 ## Thành viên và thuyết trình
 
