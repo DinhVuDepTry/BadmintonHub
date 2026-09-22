@@ -1,13 +1,13 @@
 # BadmintonHub — Hệ thống đặt sân cầu lông
 
-Project môn Lập trình Web Nâng Cao (30INF067). Xây dựng bằng ASP.NET Core MVC, EF Core, MySQL, có RBAC (Admin / CourtOwner / Customer) và API riêng cho các thao tác chính.
+Project môn Lập trình Web Nâng Cao (30INF067). Xây dựng bằng ASP.NET Core MVC, EF Core, MySQL, có RBAC thực tế cho Admin/Customer và API riêng cho các thao tác chính.
 
 ## Công nghệ
 
 - .NET 8, ASP.NET Core MVC (Razor Views)
 - EF Core + Pomelo.EntityFrameworkCore.MySql 8.0.3
 - MySQL 8.x
-- ASP.NET Core Identity (RBAC: Admin / CourtOwner / Customer)
+- ASP.NET Core Identity (RBAC: Admin / Customer)
 - Swagger (Swashbuckle.AspNetCore)
 
 ## Cách chạy project
@@ -100,9 +100,9 @@ Sau khi reverse proxy cấu hình HTTPS, kiểm tra `https://your-domain.com/hea
 
 ## Phân quyền (RBAC)
 
-Có 3 role: **Admin**, **CourtOwner**, **Customer** — được tự động tạo (seed) khi ứng dụng khởi động lần đầu.
+Có 2 role đang được sử dụng trong nghiệp vụ: **Admin** và **Customer**. Tài khoản đăng ký mới được tự động gán role `Customer`.
 
-Vì hiện chưa có giao diện gán role, cần gán thủ công qua MySQL sau khi đăng ký tài khoản:
+Tài khoản Admin cần được bootstrap riêng trong môi trường triển khai. Không cho phép người dùng tự chọn role khi đăng ký.
 
 ```sql
 SELECT Id FROM aspnetusers WHERE Email = '<email tài khoản>';
@@ -115,7 +115,6 @@ VALUES ('<user-id>', '<role-id>');
 | Role | Quyền |
 |---|---|
 | Admin | Toàn quyền quản lý sân (tạo/sửa/xóa Court), xem tất cả booking |
-| CourtOwner | (dự phòng mở rộng — hiện dùng chung quyền với Admin ở mức Court) |
 | Customer | Đặt sân, xem/hủy booking của chính mình |
 
 Mọi route MVC và API đều kiểm tra role ở controller; việc kiểm tra quyền sở hữu booking vẫn được thực hiện thêm trong service để tránh IDOR.
@@ -133,7 +132,8 @@ Mọi route MVC và API đều kiểm tra role ở controller; việc kiểm tra
 | GET | `/api/bookings` | Đã đăng nhập | Admin xem tất cả, Customer xem của mình |
 | GET | `/api/bookings/{id}` | Đã đăng nhập | Chi tiết 1 booking |
 | POST | `/api/bookings` | Customer | Đặt sân (tự check trùng lịch, trả `409` nếu trùng) |
-| DELETE | `/api/bookings/{id}` | Chủ booking | Hủy booking |
+| POST | `/api/bookings/{id}/confirm` | Admin | Xác nhận booking `Pending` |
+| DELETE | `/api/bookings/{id}` | Customer sở hữu hoặc Admin | Hủy booking |
 
 Các API `POST`, `PUT`, `DELETE` dùng cookie Identity và yêu cầu CSRF token. Client đã đăng nhập gọi `GET /api/security/csrf`, sau đó gửi token ở header `RequestVerificationToken`.
 
@@ -144,6 +144,8 @@ Các API `POST`, `PUT`, `DELETE` dùng cookie Identity và yêu cầu CSRF token
 | Danh sách sân | `/Courts` | Xem tất cả sân đang hoạt động |
 | Lịch đặt sân | `/Bookings` | Xem lịch sử đặt sân (theo quyền) |
 | Đặt sân mới | `/Bookings/Create` | Form đặt sân |
+| Admin dashboard | `/Admin` | Tổng quan sân, booking và doanh thu trong ngày |
+| Quản lý tài khoản | `/Identity/Account/Manage` | Hồ sơ, bảo mật và trạng thái tài khoản |
 
 ## Business rules đã áp dụng
 
@@ -180,4 +182,4 @@ BadmintonHub/
 dotnet test .\Tests\BadmintonHub.Tests.csproj
 ```
 
-Test hiện bao phủ tìm sân trống, sân không hoạt động và xử lý booking giao nhau.
+Test hiện bao phủ tìm sân trống, sân không hoạt động, booking giao nhau và xác nhận booking.

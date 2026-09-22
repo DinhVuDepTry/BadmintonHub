@@ -130,7 +130,7 @@ app.MapRazorPages();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = { "Admin", "CourtOwner", "Customer" };
+    string[] roles = { "Admin", "Customer" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
