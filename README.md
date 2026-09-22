@@ -111,6 +111,7 @@ VALUES ('<user-id>', '<role-id>');
 | Method | Endpoint | Quyền | Mô tả |
 |---|---|---|---|
 | GET | `/api/courts` | Public | Danh sách sân |
+| GET | `/api/courts?date=YYYY-MM-DD&startTime=HH:mm&endTime=HH:mm` | Public | Chỉ trả sân còn trống trong khung giờ |
 | GET | `/api/courts/{id}` | Public | Chi tiết 1 sân |
 | POST | `/api/courts` | Admin | Tạo sân mới |
 | PUT | `/api/courts/{id}` | Admin | Cập nhật sân |
@@ -133,8 +134,11 @@ Các API `POST`, `PUT`, `DELETE` dùng cookie Identity và yêu cầu CSRF token
 ## Business rules đã áp dụng
 
 - Không cho đặt trùng sân + ngày + khung giờ giao nhau với booking đang `Pending`/`Confirmed` (trả `409 Conflict`)
+- Chỉ cho đặt sân đang `Active` và thời gian trong tương lai
+- Không cho hủy booking trong vòng 2 giờ trước giờ bắt đầu
 - Không xóa được sân nếu vẫn còn booking liên quan
 - Giá booking tự tính = số giờ đặt × giá/giờ của sân
+- Background worker tự chuyển booking quá hạn thành `Expired` hoặc `Completed`
 - Mọi thao tác ghi (create/update/delete) qua API yêu cầu đăng nhập và đúng role tương ứng (đã kiểm thử `403 Forbidden` khi sai role)
 
 ## Cấu trúc project
@@ -153,3 +157,11 @@ BadmintonHub/
 ├── Migrations/             # EF Core Migrations
 └── Program.cs
 ```
+
+## Kiểm thử
+
+```powershell
+dotnet test .\Tests\BadmintonHub.Tests.csproj
+```
+
+Test hiện bao phủ tìm sân trống, sân không hoạt động và xử lý booking giao nhau.

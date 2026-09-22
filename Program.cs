@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using BadmintonHub.Data;
 using BadmintonHub.Models;
 using BadmintonHub.Services;
+using BadmintonHub.Services.BackgroundJobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +78,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICourtService, CourtService>();
+builder.Services.AddHostedService<BookingLifecycleWorker>();
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {

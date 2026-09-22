@@ -1,0 +1,17 @@
+@model BadmintonHub.ViewModels.CourtUpdateDto
+@{ ViewData["Title"] = "Sửa sân"; }
+
+<section class="form-intro"><p class="eyebrow dark"><span></span> ADMIN / QUẢN LÝ SÂN</p><h1>Cập nhật<br /><em>thông tin sân.</em></h1><p>Thay đổi giá, loại hoặc trạng thái hiển thị của sân.</p></section>
+
+<div class="booking-form-layout">
+<form asp-action="Edit" method="post" class="booking-form">
+    <div asp-validation-summary="All" class="validation-message"></div>
+    <div class="form-field"><label asp-for="CourtCode">Mã sân</label><input asp-for="CourtCode" class="form-control" /></div>
+    <div class="form-field"><label asp-for="CourtName">Tên sân</label><input asp-for="CourtName" class="form-control" /></div>
+    <div class="form-field"><label asp-for="CourtType">Loại sân</label><select asp-for="CourtType" class="form-select"><option value="SINGLE">Đơn</option><option value="DOUBLE">Đôi</option></select></div>
+    <div class="form-field"><label asp-for="PricePerHour">Giá / giờ</label><input asp-for="PricePerHour" class="form-control" /></div>
+    <div class="form-field"><label asp-for="Status">Trạng thái</label><select asp-for="Status" class="form-select"><option value="Active">Đang hoạt động</option><option value="Maintenance">Bảo trì</option><option value="Inactive">Tạm ngưng</option></select></div>
+    <button type="submit" class="btn btn-lime btn-lg form-submit">Lưu thay đổi <span>↗</span></button>
+</form>
+<aside class="booking-note"><span class="note-number">BH</span><strong>Kiểm soát<br />từng sân.</strong><p>Sân bảo trì hoặc tạm ngưng sẽ không xuất hiện trong tìm kiếm và không thể được đặt.</p><span class="note-line"></span><small>BADMINTONHUB / ADMIN</small></aside>
+</div>

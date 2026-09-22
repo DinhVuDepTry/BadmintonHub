@@ -44,6 +44,7 @@ else
                 @if (User.IsInRole("Admin"))
                 {
                     <div class="court-admin-actions">
+                        <a class="btn btn-sm btn-outline-dark" asp-action="Edit" asp-route-id="@c.CourtId">Sửa sân</a>
                         <form asp-action="Delete" asp-route-id="@c.CourtId" method="post" onsubmit="return confirm('Xóa sân này?');">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Xóa sân</button>
                         </form>

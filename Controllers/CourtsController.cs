@@ -28,6 +28,22 @@ public class CourtsController(ICourtService service) : Controller
     [Authorize(Roles = "Admin")]
     public IActionResult Create() => View();
 
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Edit(long id, CancellationToken ct)
+    {
+        var court = await service.GetByIdAsync(id, ct);
+        if (court is null) return NotFound();
+
+        return View(new CourtUpdateDto
+        {
+            CourtCode = court.CourtCode,
+            CourtName = court.CourtName,
+            CourtType = court.CourtType,
+            PricePerHour = court.PricePerHour,
+            Status = court.Status
+        });
+    }
+
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
@@ -42,6 +58,26 @@ public class CourtsController(ICourtService service) : Controller
         catch (Exception ex)
         {
             ModelState.AddModelError("", ex.Message);
+            return View(dto);
+        }
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(long id, CourtUpdateDto dto, CancellationToken ct)
+    {
+        if (!ModelState.IsValid) return View(dto);
+
+        try
+        {
+            var updated = await service.UpdateAsync(id, dto, ct);
+            if (updated is null) return NotFound();
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
             return View(dto);
         }
     }
