@@ -4,6 +4,7 @@ This dossier is the submission companion for the Advanced Web Programming projec
 
 ## Reading order
 
+0. [Submission Cover](00-submission-cover.md)
 1. [Requirements](01-requirements.md)
 2. [Use Cases](02-use-cases.md)
 3. [User Stories and Acceptance Criteria](03-user-stories.md)
@@ -14,6 +15,7 @@ This dossier is the submission companion for the Advanced Web Programming projec
 8. [Threat Model and RBAC](08-threat-model-rbac.md)
 9. [Traceability Matrix](09-traceability-matrix.md)
 10. [Operations and Limitations](10-operations.md)
+11. [Submission Checklist](11-submission-checklist.md)
 
 ## Scope statement
 

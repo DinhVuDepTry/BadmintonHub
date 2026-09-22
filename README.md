@@ -186,4 +186,4 @@ Test hiện bao phủ tìm sân trống, sân không hoạt động, booking gia
 
 ## Hồ sơ phân tích và thiết kế
 
-Bộ hồ sơ phục vụ rubric môn học nằm trong thư mục [docs](docs/README.md), bao gồm requirements, use cases, user stories/acceptance criteria, ERD, system design, sequence/API contract, ADR, threat model/RBAC, traceability matrix và operations.
+Bộ hồ sơ phục vụ rubric môn học nằm trong thư mục [docs](docs/README.md), bao gồm cover, requirements, use cases, user stories/acceptance criteria, ERD, system design, sequence/API contract, ADR, threat model/RBAC, traceability matrix, operations và checklist demo.
