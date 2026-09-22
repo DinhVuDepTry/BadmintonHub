@@ -1,0 +1,12 @@
+@page
+@model Microsoft.AspNetCore.Mvc.RazorPages.PageModel
+@{
+    ViewData["Title"] = "Không có quyền truy cập";
+}
+
+<section class="simple-state">
+    <p class="eyebrow dark"><span></span> BADMINTONHUB / 403</p>
+    <h1>Khu vực này<br /><em>chưa mở cho bạn.</em></h1>
+    <p>Tài khoản hiện tại không có quyền thực hiện thao tác này.</p>
+    <a class="btn btn-lime" asp-controller="Home" asp-action="Index">Về trang chủ <span>↗</span></a>
+</section>

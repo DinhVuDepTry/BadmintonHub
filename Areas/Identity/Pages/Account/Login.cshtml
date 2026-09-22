@@ -1,0 +1,39 @@
+@page
+@model BadmintonHub.Areas.Identity.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<section class="auth-shell">
+    <div class="auth-aside">
+        <p class="eyebrow"><span></span> BADMINTONHUB / MEMBER</p>
+        <h1>Trận đấu<br /><em>đang chờ.</em></h1>
+        <p>Đăng nhập để tiếp tục quản lý lịch đặt sân và sẵn sàng cho trận tiếp theo.</p>
+        <div class="auth-aside-mark">BH<span>↗</span></div>
+    </div>
+    <div class="auth-panel">
+        <div class="auth-panel-head"><span>CHÀO MỪNG TRỞ LẠI</span><i>01 / 02</i></div>
+        <h2>Đăng nhập</h2>
+        <p class="auth-muted">Chưa có tài khoản? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Tạo tài khoản</a></p>
+        <form method="post" class="auth-form">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="validation-message"></div>
+            <div class="form-field">
+                <label asp-for="Input.Email">Email</label>
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="you@example.com" />
+                <span asp-validation-for="Input.Email" class="field-error"></span>
+            </div>
+            <div class="form-field">
+                <div class="label-row"><label asp-for="Input.Password">Mật khẩu</label><a asp-page="./ForgotPassword">Quên mật khẩu?</a></div>
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" placeholder="Nhập mật khẩu của bạn" />
+                <span asp-validation-for="Input.Password" class="field-error"></span>
+            </div>
+            <label class="remember-row"><input asp-for="Input.RememberMe" /><span>Ghi nhớ đăng nhập</span></label>
+            <button type="submit" class="btn btn-lime btn-lg form-submit">Đăng nhập <span>↗</span></button>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

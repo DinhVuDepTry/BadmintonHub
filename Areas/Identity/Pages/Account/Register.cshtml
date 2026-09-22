@@ -1,0 +1,35 @@
+@page
+@model BadmintonHub.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Tạo tài khoản";
+}
+
+<section class="auth-shell auth-register">
+    <div class="auth-aside">
+        <p class="eyebrow"><span></span> BADMINTONHUB / JOIN THE CLUB</p>
+        <h1>Sân đã sẵn.<br /><em>Bạn thì sao?</em></h1>
+        <p>Tạo tài khoản miễn phí để đặt sân nhanh hơn và luôn nắm được lịch đấu của mình.</p>
+        <div class="auth-feature-list"><span>01</span><b>Lịch đặt rõ ràng</b><span>02</span><b>Giá minh bạch</b><span>03</span><b>Vào trận đúng giờ</b></div>
+    </div>
+    <div class="auth-panel">
+        <div class="auth-panel-head"><span>BẮT ĐẦU HÀNH TRÌNH</span><i>02 / 02</i></div>
+        <h2>Tạo tài khoản</h2>
+        <p class="auth-muted">Đã là thành viên? <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Đăng nhập</a></p>
+        <form method="post" class="auth-form">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="validation-message"></div>
+            <div class="form-field"><label asp-for="Input.FullName"></label><input asp-for="Input.FullName" class="form-control" autocomplete="name" placeholder="Nguyễn Văn A" /><span asp-validation-for="Input.FullName" class="field-error"></span></div>
+            <div class="form-field"><label asp-for="Input.Email">Email</label><input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="you@example.com" /><span asp-validation-for="Input.Email" class="field-error"></span></div>
+            <div class="form-time-grid">
+                <div class="form-field"><label asp-for="Input.Password">Mật khẩu</label><input asp-for="Input.Password" class="form-control" autocomplete="new-password" placeholder="Tối thiểu 8 ký tự" /><span asp-validation-for="Input.Password" class="field-error"></span></div>
+                <div class="form-field"><label asp-for="Input.ConfirmPassword"></label><input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" placeholder="Nhập lại mật khẩu" /><span asp-validation-for="Input.ConfirmPassword" class="field-error"></span></div>
+            </div>
+            <button type="submit" class="btn btn-lime btn-lg form-submit">Tạo tài khoản <span>↗</span></button>
+            <p class="auth-terms">Bằng việc đăng ký, bạn đồng ý với quy định sử dụng của BadmintonHub.</p>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

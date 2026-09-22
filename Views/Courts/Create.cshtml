@@ -1,28 +1,21 @@
 @model BadmintonHub.ViewModels.CourtCreateDto
-@{ ViewData["Title"] = "Thêm sân"; }
+@{ ViewData["Title"] = "Thêm sân mới"; }
 
-<h1>Thêm sân mới</h1>
-<div asp-validation-summary="All" class="text-danger"></div>
+<section class="form-intro"><p class="eyebrow dark"><span></span> ADMIN / QUẢN LÝ SÂN</p><h1>Thêm một sân<br /><em>mới vào hub.</em></h1><p>Điền thông tin sân để khách hàng có thể tìm thấy và đặt lịch.</p></section>
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label class="form-label">Mã sân</label>
-        <input asp-for="CourtCode" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Tên sân</label>
-        <input asp-for="CourtName" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Loại sân</label>
+<div class="booking-form-layout">
+<form asp-action="Create" method="post" class="booking-form">
+    <div asp-validation-summary="All" class="validation-message"></div>
+    <div class="form-field"><label asp-for="CourtCode">Mã sân</label><input asp-for="CourtCode" class="form-control" placeholder="VD: C01" /></div>
+    <div class="form-field"><label asp-for="CourtName">Tên sân</label><input asp-for="CourtName" class="form-control" placeholder="VD: Sân trung tâm" /></div>
+    <div class="form-field"><label asp-for="CourtType">Loại sân</label>
         <select asp-for="CourtType" class="form-select">
             <option value="SINGLE">Đơn</option>
             <option value="DOUBLE">Đôi</option>
         </select>
     </div>
-    <div class="mb-3">
-        <label class="form-label">Giá/giờ</label>
-        <input asp-for="PricePerHour" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary">Lưu</button>
+    <div class="form-field"><label asp-for="PricePerHour">Giá / giờ</label><input asp-for="PricePerHour" class="form-control" placeholder="VD: 120000" /></div>
+    <button type="submit" class="btn btn-lime btn-lg form-submit">Lưu sân mới <span>↗</span></button>
 </form>
+<aside class="booking-note"><span class="note-number">BH</span><strong>Giữ mọi thứ<br />thật rõ ràng.</strong><p>Mã sân, loại sân và giá giờ sẽ được hiển thị trực tiếp cho khách hàng.</p><span class="note-line"></span><small>BADMINTONHUB / ADMIN</small></aside>
+</div>
