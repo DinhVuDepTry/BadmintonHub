@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using BadmintonHub.Services;
 using BadmintonHub.ViewModels;
 
@@ -7,12 +8,16 @@ namespace BadmintonHub.Controllers.Api;
 
 [ApiController]
 [Route("api/courts")]
+[EnableRateLimiting("api")]
 public class CourtsApiController(ICourtService service) : ControllerBase
 {
     // Ai cũng xem được danh sách sân (kể cả khách chưa login, nếu muốn public thì bỏ [Authorize])
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<CourtResponseDto>>> GetAll(CancellationToken ct) =>
-        Ok(await service.GetAllAsync(ct));
+    public async Task<ActionResult<IReadOnlyList<CourtResponseDto>>> GetAll(CancellationToken ct)
+    {
+        var courts = await service.GetAllAsync(ct);
+        return Ok(User.IsInRole("Admin") ? courts : courts.Where(c => c.Status == Models.Enums.CourtStatus.Active));
+    }
 
     [HttpGet("{id:long}")]
     public async Task<ActionResult<CourtResponseDto>> GetById(long id, CancellationToken ct)
@@ -24,6 +29,7 @@ public class CourtsApiController(ICourtService service) : ControllerBase
     // Chỉ Admin được tạo/sửa/xóa sân -> đây là chỗ thể hiện RBAC rõ nhất
     [HttpPost]
     [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<ActionResult<CourtResponseDto>> Create(CourtCreateDto dto, CancellationToken ct)
     {
         var item = await service.CreateAsync(dto, ct);
@@ -32,6 +38,7 @@ public class CourtsApiController(ICourtService service) : ControllerBase
 
     [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<ActionResult<CourtResponseDto>> Update(long id, CourtUpdateDto dto, CancellationToken ct)
     {
         var item = await service.UpdateAsync(id, dto, ct);
@@ -40,6 +47,7 @@ public class CourtsApiController(ICourtService service) : ControllerBase
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct) =>
         await service.DeleteAsync(id, ct) ? NoContent() : NotFound();
 }

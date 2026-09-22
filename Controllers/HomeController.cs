@@ -4,7 +4,7 @@ using BadmintonHub.Models;
 
 namespace BadmintonHub.Controllers;
 
-public class HomeController(ILogger<HomeController> logger) : Controller
+public class HomeController : Controller
 {
     public IActionResult Index()
     {

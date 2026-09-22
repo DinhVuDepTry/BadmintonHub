@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using BadmintonHub.Data;
 using BadmintonHub.Models;
@@ -11,6 +13,21 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("api", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 120;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+    });
+});
 // DbContext
 var connectionString = builder.Configuration.GetConnectionString("BadmintonDb")
     ?? throw new InvalidOperationException("Missing ConnectionStrings:BadmintonDb");
@@ -92,12 +109,14 @@ await context.Response.WriteAsJsonAsync(new { title, detail });
     });
 });
 
-//app.UseHttpsRedirection();
+app.UseForwardedHeaders();
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication(); // BẮT BUỘC trước Authorization
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapControllerRoute(
     name: "default",
@@ -114,5 +133,11 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 }
-app.MapGet("/health", () => Results.Ok(new { status = "healthy", time = DateTime.UtcNow }));
+app.MapGet("/health", async (AppDbContext db, CancellationToken ct) =>
+{
+    var databaseAvailable = await db.Database.CanConnectAsync(ct);
+    return databaseAvailable
+        ? Results.Ok(new { status = "healthy", database = "available", time = DateTime.UtcNow })
+        : Results.Json(new { status = "unhealthy", database = "unavailable", time = DateTime.UtcNow }, statusCode: 503);
+});
 app.Run();

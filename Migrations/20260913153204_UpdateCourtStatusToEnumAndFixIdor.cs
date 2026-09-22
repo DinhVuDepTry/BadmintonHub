@@ -10,6 +10,8 @@ namespace BadmintonHub.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("UPDATE court SET status = CASE UPPER(status) WHEN 'ACTIVE' THEN '0' WHEN 'MAINTENANCE' THEN '1' WHEN 'INACTIVE' THEN '2' ELSE '0' END;");
+
             migrationBuilder.AlterColumn<int>(
                 name: "status",
                 table: "court",

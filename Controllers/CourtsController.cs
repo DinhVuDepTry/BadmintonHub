@@ -10,6 +10,8 @@ public class CourtsController(ICourtService service) : Controller
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var courts = await service.GetAllAsync(ct);
+        if (!User.IsInRole("Admin"))
+            courts = courts.Where(c => c.Status == Models.Enums.CourtStatus.Active).ToList();
         return View(courts);
     }
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using BadmintonHub.Models;
 using BadmintonHub.Services;
 using BadmintonHub.ViewModels;
@@ -10,6 +11,7 @@ namespace BadmintonHub.Controllers.Api;
 [ApiController]
 [Route("api/bookings")]
 [Authorize] // bắt buộc đăng nhập cho mọi endpoint trong controller này
+[EnableRateLimiting("api")]
 public class BookingsApiController(
     IBookingService bookingService,
     UserManager<ApplicationUser> userManager) : ControllerBase
@@ -41,6 +43,7 @@ public async Task<ActionResult<BookingResponseDto>> GetById(long id, Cancellatio
     // POST api/bookings -> chỉ Customer đặt sân cho chính mình
     [HttpPost]
     [Authorize(Roles = "Customer")]
+    [ValidateAntiForgeryToken]
     public async Task<ActionResult<BookingResponseDto>> Create(
         BookingCreateDto dto, CancellationToken ct)
     {
@@ -50,6 +53,7 @@ public async Task<ActionResult<BookingResponseDto>> GetById(long id, Cancellatio
     }
 
     [HttpDelete("{id:long}")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Cancel(long id, CancellationToken ct)
     {
         var userId = userManager.GetUserId(User)!;

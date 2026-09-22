@@ -44,7 +44,7 @@ dotnet tool restore
 dotnet ef database update
 ```
 
-### 5. Chạy project
+### 5. Chạy project local
 
 ```powershell
 dotnet run
@@ -54,6 +54,37 @@ Mở `http://localhost:5176` (hoặc port hiển thị trong terminal khi chạy
 
 - Swagger (test API): `http://localhost:5176/swagger`
 - Đăng ký tài khoản: `http://localhost:5176/Identity/Account/Register`
+
+## Deploy production bằng Docker
+
+Không đưa password database vào source code. Trên server, thiết lập các biến môi trường:
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT = "Production"
+$env:ConnectionStrings__BadmintonDb = "Server=mysql;Port=3306;Database=badmintonhub_db;User=badminton_api;Password=<mat-khau>;"
+$env:ASPNETCORE_URLS = "http://+:8080"
+$env:AllowedHosts = "your-domain.com"
+```
+
+Build và chạy container:
+
+```powershell
+docker build -t badmintonhub:latest .
+docker run --rm -p 8080:8080 `
+	-e ASPNETCORE_ENVIRONMENT=Production `
+	-e ConnectionStrings__BadmintonDb="Server=<mysql-host>;Port=3306;Database=badmintonhub_db;User=badminton_api;Password=<mat-khau>;" `
+	-e AllowedHosts="your-domain.com" `
+	badmintonhub:latest
+```
+
+Trước lần chạy đầu tiên, chạy migration từ máy có quyền truy cập MySQL:
+
+```powershell
+$env:ConnectionStrings__BadmintonDb = "Server=<mysql-host>;Port=3306;Database=badmintonhub_db;User=badminton_api;Password=<mat-khau>;"
+dotnet ef database update --configuration Release
+```
+
+Sau khi reverse proxy cấu hình HTTPS, kiểm tra `https://your-domain.com/health`. Health check trả `200` khi ứng dụng kết nối được database và `503` khi database không khả dụng. Swagger chỉ bật trong Development; không mở Swagger công khai ở Production.
 
 ## Phân quyền (RBAC)
 
@@ -88,6 +119,8 @@ VALUES ('<user-id>', '<role-id>');
 | GET | `/api/bookings/{id}` | Đã đăng nhập | Chi tiết 1 booking |
 | POST | `/api/bookings` | Customer | Đặt sân (tự check trùng lịch, trả `409` nếu trùng) |
 | DELETE | `/api/bookings/{id}` | Chủ booking | Hủy booking |
+
+Các API `POST`, `PUT`, `DELETE` dùng cookie Identity và yêu cầu CSRF token. Client đã đăng nhập gọi `GET /api/security/csrf`, sau đó gửi token ở header `RequestVerificationToken`.
 
 ## Giao diện Razor
 
