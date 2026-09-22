@@ -1,13 +1,13 @@
 @model BadmintonHub.ViewModels.BookingCreateDto
-@{ ViewData["Title"] = "Đặt sân"; }
+@{ ViewData["Title"] = "Đặt sân mới"; }
 
-<h1>Đặt sân</h1>
+<section class="form-intro"><p class="eyebrow dark"><span></span> ĐẶT SÂN MỚI</p><h1>Sẵn sàng vào trận<br /><em>chưa?</em></h1><p>Chọn sân và khung giờ phù hợp. Phần còn lại để BadmintonHub lo.</p></section>
 
-<div asp-validation-summary="All" class="text-danger"></div>
-
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label class="form-label">Sân</label>
+<div class="booking-form-layout">
+<form asp-action="Create" method="post" class="booking-form">
+    <div asp-validation-summary="All" class="validation-message"></div>
+    <div class="form-field">
+        <label asp-for="CourtId">Chọn sân</label>
         <select asp-for="CourtId" class="form-select">
             @foreach (var c in (IEnumerable<BadmintonHub.ViewModels.CourtResponseDto>)ViewBag.Courts)
             {
@@ -15,17 +15,21 @@
             }
         </select>
     </div>
-    <div class="mb-3">
-        <label class="form-label">Ngày</label>
+    <div class="form-field">
+        <label asp-for="BookingDate">Ngày thi đấu</label>
         <input asp-for="BookingDate" type="date" class="form-control" />
     </div>
-    <div class="mb-3">
-        <label class="form-label">Giờ bắt đầu</label>
+    <div class="form-time-grid">
+    <div class="form-field">
+        <label asp-for="StartTime">Bắt đầu</label>
         <input asp-for="StartTime" type="time" class="form-control" />
     </div>
-    <div class="mb-3">
-        <label class="form-label">Giờ kết thúc</label>
+    <div class="form-field">
+        <label asp-for="EndTime">Kết thúc</label>
         <input asp-for="EndTime" type="time" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary">Đặt sân</button>
+    </div>
+    <button type="submit" class="btn btn-lime btn-lg form-submit">Xác nhận đặt sân <span>↗</span></button>
 </form>
+<aside class="booking-note"><span class="note-number">01</span><strong>Đặt minh bạch</strong><p>Giá được tính tự động theo số giờ và mức giá của sân. Không có phụ phí bất ngờ.</p><span class="note-line"></span><small>BADMINTONHUB / BOOKING</small></aside>
+</div>

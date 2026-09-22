@@ -1,11 +1,14 @@
 @model IReadOnlyList<BadmintonHub.ViewModels.CourtResponseDto>
-@{ ViewData["Title"] = "Danh sách sân"; }
+@{ ViewData["Title"] = "Khám phá sân"; }
 
-<h1>Danh sách sân</h1>
+<section class="page-heading">
+    <div><p class="eyebrow dark"><span></span> BADMINTONHUB / ĐỊA ĐIỂM</p><h1>Chọn sân cho<br /><em>trận đấu tiếp theo.</em></h1></div>
+    <p>Tất cả sân đang hoạt động, giá minh bạch và sẵn sàng chờ bạn.</p>
+</section>
 
 @if (User.IsInRole("Admin"))
 {
-    <a class="btn btn-primary mb-3" asp-action="Create">+ Thêm sân</a>
+    <a class="btn btn-dark-pill mb-4" asp-action="Create">+ Thêm sân mới</a>
 }
 
 @if (TempData["Error"] != null)
@@ -15,33 +18,26 @@
 
 @if (!Model.Any())
 {
-    <p class="text-muted">Chưa có sân nào.</p>
+    <div class="empty-state"><strong>Chưa có sân nào.</strong><span>Hãy thêm sân đầu tiên để bắt đầu.</span></div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr><th>Mã sân</th><th>Tên sân</th><th>Loại</th><th>Giá/giờ</th><th>Trạng thái</th>@if (User.IsInRole("Admin")){<th></th>}</tr>
-        </thead>
-        <tbody>
+    <div class="court-grid">
         @foreach (var c in Model)
         {
-            <tr>
-                <td>@c.CourtCode</td>
-                <td>@c.CourtName</td>
-                <td>@c.CourtType</td>
-                <td>@c.PricePerHour.ToString("N0") đ</td>
-                <td>@c.Status</td>
+            <article class="court-card">
+                <div class="court-card-top"><span class="court-number">@c.CourtCode</span><span class="status-pill status-@c.Status.ToString().ToLowerInvariant()">@c.Status</span></div>
+                <div class="court-art"><span>BADMINTON</span><strong>@c.CourtName</strong><i>↗</i></div>
+                <div class="court-card-info"><div><small>LOẠI SÂN</small><strong>@c.CourtType</strong></div><div class="price"><small>GIÁ / GIỜ</small><strong>@c.PricePerHour.ToString("N0") <small>đ</small></strong></div></div>
                 @if (User.IsInRole("Admin"))
                 {
-                    <td>
+                    <div class="court-admin-actions">
                         <form asp-action="Delete" asp-route-id="@c.CourtId" method="post" onsubmit="return confirm('Xóa sân này?');">
-                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Xóa sân</button>
                         </form>
-                    </td>
+                    </div>
                 }
-            </tr>
+            </article>
         }
-        </tbody>
-    </table>
+    </div>
 }

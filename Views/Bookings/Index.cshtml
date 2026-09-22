@@ -1,16 +1,18 @@
 @model IReadOnlyList<BadmintonHub.ViewModels.BookingResponseDto>
-@{ ViewData["Title"] = "Lịch đặt sân"; }
+@{ ViewData["Title"] = "Lịch đặt của tôi"; }
 
-<h1>Lịch đặt sân</h1>
-<a class="btn btn-primary mb-3" asp-action="Create">Đặt sân mới</a>
+<section class="page-heading compact-heading">
+    <div><p class="eyebrow dark"><span></span> LỊCH CỦA BẠN</p><h1>Những trận đấu<br /><em>đang chờ bạn.</em></h1></div>
+    <a class="btn btn-lime" asp-action="Create">Đặt sân mới <span>↗</span></a>
+</section>
 
 @if (!Model.Any())
 {
-    <p class="text-muted">Chưa có lịch đặt sân nào. <a asp-action="Create">Đặt sân ngay</a></p>
+    <div class="empty-state"><strong>Chưa có lịch đặt sân nào.</strong><span>Khung giờ đẹp đang chờ bạn chọn.</span><a class="text-link" asp-action="Create">Đặt sân ngay →</a></div>
 }
 else
 {
-    <table class="table">
+    <div class="booking-list"><table class="booking-table">
         <thead>
             <tr><th>Sân</th><th>Ngày</th><th>Giờ</th><th>Trạng thái</th><th>Giá</th><th></th></tr>
         </thead>
@@ -24,22 +26,22 @@ else
                 "Expired" => "bg-danger",
                 _ => "bg-light text-dark"
             };
-            <tr>
-                <td>@b.CourtName</td>
-                <td>@b.BookingDate.ToString("dd/MM/yyyy")</td>
-                <td>@b.StartTime - @b.EndTime</td>
-                <td><span class="badge @badgeClass">@b.Status</span></td>
-                <td>@b.TotalPrice.ToString("N0") đ</td>
-                <td>
+            <tr class="booking-row">
+                <td><strong>@b.CourtName</strong><small>Mã đặt #@b.BookingId</small></td>
+                <td><strong>@b.BookingDate.ToString("dd/MM/yyyy")</strong></td>
+                <td><strong>@b.StartTime - @b.EndTime</strong></td>
+                <td><span class="status-badge @badgeClass">@b.Status</span></td>
+                <td><strong class="price-text">@b.TotalPrice.ToString("N0") đ</strong></td>
+                <td class="booking-action">
                 @if (b.Status == "Pending" || b.Status == "Confirmed")
                 {
                     <form asp-action="Cancel" asp-route-id="@b.BookingId" method="post" onsubmit="return confirm('Hủy đặt sân này?');">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Hủy</button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Hủy đặt</button>
                     </form>
                 }
                 </td>
             </tr>
         }
         </tbody>
-    </table>
+    </table></div>
 }

@@ -1,8 +1,30 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@{ ViewData["Title"] = "Đặt sân cầu lông"; }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero-section">
+    <div class="hero-copy">
+        <p class="eyebrow"><span></span> NỀN TẢNG ĐẶT SÂN CỦA BẠN</p>
+        <h1>Trận hay bắt đầu<br /><em>từ một cú chạm.</em></h1>
+        <p class="hero-lead">Tìm sân phù hợp, chọn khung giờ và sẵn sàng vào trận. BadmintonHub giúp việc đặt sân nhanh gọn như một cú smash.</p>
+        <div class="hero-actions">
+            <a class="btn btn-lime btn-lg" asp-controller="Courts" asp-action="Index">Khám phá sân <span>↗</span></a>
+            <a class="text-link" asp-controller="Bookings" asp-action="Index">Xem lịch đặt <span>→</span></a>
+        </div>
+    </div>
+    <div class="hero-visual" aria-label="Sân cầu lông BadmintonHub">
+        <div class="court-lines court-lines-back"></div>
+        <div class="hero-ball">●</div>
+        <div class="hero-stamp">PLAY<br /><strong>YOUR</strong><br />BEST</div>
+        <div class="hero-caption"><span>01</span><b>SÂN TIÊU CHUẨN</b><small>Sẵn sàng cho trận đấu tiếp theo</small></div>
+    </div>
+</section>
+
+<section class="stats-strip">
+    <div><strong>Đặt sân</strong><span>nhanh trong vài bước</span></div>
+    <div><strong>Giá rõ ràng</strong><span>tính theo giờ, không phí ẩn</span></div>
+    <div><strong>Lịch minh bạch</strong><span>tránh trùng khung giờ</span></div>
+</section>
+
+<section class="home-section intro-section">
+    <div><p class="eyebrow dark"><span></span> BẠN ĐANG TÌM GÌ?</p><h2>Một sân tốt làm<br />trận đấu khác đi.</h2></div>
+    <p class="section-copy">Từ buổi tập nhẹ sau giờ làm đến trận cầu căng thẳng cuối tuần, chọn đúng không gian để tận hưởng từng đường cầu.</p>
+</section>
