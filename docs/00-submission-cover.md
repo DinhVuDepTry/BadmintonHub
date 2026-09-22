@@ -34,4 +34,4 @@ Không bao gồm payment, chat, review, mobile app, multi-venue ownership và Co
 
 Xem [README hồ sơ](README.md) để đọc theo thứ tự rubric. Checklist demo và evidence nằm tại [11-submission-checklist.md](11-submission-checklist.md).
 
-Phân công và đóng góp thành viên nằm tại [12-member-contributions.md](12-member-contributions.md).
+Phân công và đóng góp thành viên nằm tại [THANH_VIEN_VA_CONG_VIEC.md](../THANH_VIEN_VA_CONG_VIEC.md).

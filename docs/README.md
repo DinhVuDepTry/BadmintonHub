@@ -16,7 +16,8 @@ This dossier is the submission companion for the Advanced Web Programming projec
 9. [Traceability Matrix](09-traceability-matrix.md)
 10. [Operations and Limitations](10-operations.md)
 11. [Submission Checklist](11-submission-checklist.md)
-12. [Member Contributions](12-member-contributions.md)
+12. [Member Contributions](../THANH_VIEN_VA_CONG_VIEC.md)
+13. [Presentation Preparation](../ON_TAP_THUYET_TRINH.md)
 
 ## Scope statement
 

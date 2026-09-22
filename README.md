@@ -187,3 +187,8 @@ Test hiện bao phủ tìm sân trống, sân không hoạt động, booking gia
 ## Hồ sơ phân tích và thiết kế
 
 Bộ hồ sơ phục vụ rubric môn học nằm trong thư mục [docs](docs/README.md), bao gồm cover, requirements, use cases, user stories/acceptance criteria, ERD, system design, sequence/API contract, ADR, threat model/RBAC, traceability matrix, operations và checklist demo.
+
+## Thành viên và thuyết trình
+
+- [Phân công thành viên và công việc](THANH_VIEN_VA_CONG_VIEC.md)
+- [Ôn tập thuyết trình và câu hỏi giảng viên](ON_TAP_THUYET_TRINH.md)
