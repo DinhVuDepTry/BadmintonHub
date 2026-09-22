@@ -6,7 +6,7 @@
 **Mã học phần:** 30INF067  
 **Lớp:** `Điền tên lớp`  
 **Nhóm:** `Điền tên nhóm`  
-**Sinh viên:** `Điền họ tên và mã số`  
+**Thành viên:** Đình Văn Vũ, Nguyễn Duy Anh, Nguyễn Minh Hạnh  
 **Giảng viên:** `Điền tên giảng viên`  
 **Ngày nộp:** `23/09/2026`
 
@@ -33,3 +33,5 @@ Không bao gồm payment, chat, review, mobile app, multi-venue ownership và Co
 ## Cấu trúc hồ sơ
 
 Xem [README hồ sơ](README.md) để đọc theo thứ tự rubric. Checklist demo và evidence nằm tại [11-submission-checklist.md](11-submission-checklist.md).
+
+Phân công và đóng góp thành viên nằm tại [12-member-contributions.md](12-member-contributions.md).
