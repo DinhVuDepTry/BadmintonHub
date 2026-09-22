@@ -26,6 +26,8 @@
         <span class="settings-nav-label">CÀI ĐẶT</span>
         <a class="settings-nav-item active" href="#profile">Hồ sơ cá nhân <span>01</span></a>
         <a class="settings-nav-item" href="#security">Bảo mật <span>02</span></a>
+        <a class="settings-nav-item" href="#account-status">Tài khoản <span>03</span></a>
+        <a class="settings-nav-link" asp-controller="Bookings" asp-action="Index">Lịch đặt sân <span>↗</span></a>
         <div class="settings-nav-foot"><span>MEMBER SINCE</span><strong>BADMINTONHUB</strong></div>
     </aside>
 
@@ -58,6 +60,17 @@
             {
                 <p class="settings-muted">Tài khoản đăng nhập ngoài chưa có mật khẩu cục bộ.</p>
             }
+        </section>
+
+        <section class="settings-card" id="account-status">
+            <div class="settings-card-head"><div><span class="settings-index">03</span><h2>Trạng thái tài khoản</h2></div><span class="settings-card-note">ACCOUNT</span></div>
+            <p class="settings-card-description">Thông tin quyền truy cập và trạng thái xác minh của tài khoản.</p>
+            <div class="account-status-grid">
+                <div class="account-status-item"><span>VAI TRÒ</span><strong>@Model.RoleName</strong><small>Quyền truy cập hiện tại</small></div>
+                <div class="account-status-item"><span>EMAIL</span><strong>@(Model.EmailConfirmed ? "Đã xác minh" : "Chưa xác minh")</strong><small>@Model.Email</small></div>
+                <div class="account-status-item"><span>ĐIỆN THOẠI</span><strong>@(Model.PhoneConfirmed ? "Đã xác minh" : "Chưa cập nhật")</strong><small>@(Model.PhoneConfirmed ? "Số điện thoại bảo mật" : "Thêm số ở mục hồ sơ")</small></div>
+            </div>
+            <div class="settings-quick-actions"><a class="btn btn-dark-pill" asp-controller="Bookings" asp-action="Index">Xem lịch đặt <span>↗</span></a><a class="text-link" asp-controller="Home" asp-action="Index">Về trang chủ <span>→</span></a></div>
         </section>
     </main>
 </div>

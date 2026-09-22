@@ -18,6 +18,9 @@ public class IndexModel(
     public PasswordInput Password { get; set; } = new();
 
     public string Email { get; private set; } = string.Empty;
+    public bool EmailConfirmed { get; private set; }
+    public bool PhoneConfirmed { get; private set; }
+    public string RoleName { get; private set; } = "Customer";
     public bool HasPassword { get; private set; }
     public string? StatusMessage { get; set; }
 
@@ -124,6 +127,9 @@ public class IndexModel(
     private async Task LoadAsync(ApplicationUser user, bool loadProfile = true, bool loadPassword = true)
     {
         Email = user.Email ?? string.Empty;
+        EmailConfirmed = user.EmailConfirmed;
+        PhoneConfirmed = user.PhoneNumberConfirmed;
+        RoleName = (await userManager.GetRolesAsync(user)).FirstOrDefault() ?? "Customer";
         HasPassword = await userManager.HasPasswordAsync(user);
         if (loadProfile)
         {
