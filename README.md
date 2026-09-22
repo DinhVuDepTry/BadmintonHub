@@ -153,6 +153,8 @@ Các API `POST`, `PUT`, `DELETE` dùng cookie Identity và yêu cầu CSRF token
 - Không xóa được sân nếu vẫn còn booking liên quan
 - Giá booking tự tính = số giờ đặt × giá/giờ của sân
 - Background worker tự chuyển booking quá hạn thành `Expired` hoặc `Completed`
+- Admin có thể xác nhận booking `Pending` thành `Confirmed` qua web hoặc API
+- Admin dashboard tại `/Admin` hiển thị sân đang hoạt động, booking chờ xác nhận, booking hôm nay và doanh thu hôm nay
 - Mọi thao tác ghi (create/update/delete) qua API yêu cầu đăng nhập và đúng role tương ứng (đã kiểm thử `403 Forbidden` khi sai role)
 
 ## Cấu trúc project

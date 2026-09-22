@@ -1,9 +1,12 @@
 @model IReadOnlyList<BadmintonHub.ViewModels.BookingResponseDto>
-@{ ViewData["Title"] = "Lịch đặt của tôi"; }
+@{ var isAdmin = User.IsInRole("Admin"); ViewData["Title"] = isAdmin ? "Quản lý booking" : "Lịch đặt của tôi"; }
 
 <section class="page-heading compact-heading">
-    <div><p class="eyebrow dark"><span></span> LỊCH CỦA BẠN</p><h1>Những trận đấu<br /><em>đang chờ bạn.</em></h1></div>
-    <a class="btn btn-lime" asp-action="Create">Đặt sân mới <span>↗</span></a>
+    <div><p class="eyebrow dark"><span></span> @(isAdmin ? "ADMIN / BOOKING" : "LỊCH CỦA BẠN")</p><h1>@if (isAdmin) { <text>Điều phối mọi<br /><em>trận đấu.</em></text> } else { <text>Những trận đấu<br /><em>đang chờ bạn.</em></text> }</h1></div>
+    @if (!isAdmin)
+    {
+        <a class="btn btn-lime" asp-action="Create">Đặt sân mới <span>↗</span></a>
+    }
 </section>
 
 @if (!Model.Any())
@@ -33,6 +36,12 @@ else
                 <td><span class="status-badge @badgeClass">@b.Status</span></td>
                 <td><strong class="price-text">@b.TotalPrice.ToString("N0") đ</strong></td>
                 <td class="booking-action">
+                @if (isAdmin && b.Status == "Pending")
+                {
+                    <form asp-action="Confirm" asp-route-id="@b.BookingId" method="post">
+                        <button type="submit" class="btn btn-sm btn-lime">Xác nhận</button>
+                    </form>
+                }
                 @if (b.Status == "Pending" || b.Status == "Confirmed")
                 {
                     <form asp-action="Cancel" asp-route-id="@b.BookingId" method="post" onsubmit="return confirm('Hủy đặt sân này?');">

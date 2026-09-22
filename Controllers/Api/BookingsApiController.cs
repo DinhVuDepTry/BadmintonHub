@@ -61,4 +61,10 @@ public async Task<ActionResult<BookingResponseDto>> GetById(long id, Cancellatio
         var success = await bookingService.CancelAsync(id, userId, User.IsInRole("Admin"), ct);
         return success ? NoContent() : NotFound();
     }
+
+    [HttpPost("{id:long}/confirm")]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Confirm(long id, CancellationToken ct) =>
+        await bookingService.ConfirmAsync(id, ct) ? NoContent() : NotFound();
 }

@@ -1,0 +1,31 @@
+@model BadmintonHub.ViewModels.AdminDashboardViewModel
+@{ ViewData["Title"] = "Admin dashboard"; }
+
+<section class="page-heading compact-heading">
+    <div><p class="eyebrow dark"><span></span> BADMINTONHUB / ADMIN</p><h1>Hôm nay có gì<br /><em>trên sân?</em></h1></div>
+    <a class="btn btn-lime" asp-controller="Bookings" asp-action="Index">Quản lý booking <span>↗</span></a>
+</section>
+
+<section class="dashboard-grid">
+    <article class="dashboard-stat"><span>SÂN ĐANG HOẠT ĐỘNG</span><strong>@Model.ActiveCourtCount</strong><small>có thể đặt ngay</small></article>
+    <article class="dashboard-stat dashboard-stat-accent"><span>CHỜ XÁC NHẬN</span><strong>@Model.PendingBookingCount</strong><small>cần xử lý</small></article>
+    <article class="dashboard-stat"><span>BOOKING HÔM NAY</span><strong>@Model.TodayBookingCount</strong><small>không tính booking đã hủy</small></article>
+    <article class="dashboard-stat dashboard-stat-revenue"><span>DOANH THU HÔM NAY</span><strong>@Model.TodayRevenue.ToString("N0")</strong><small>VNĐ</small></article>
+</section>
+
+<section class="dashboard-list">
+    <div class="dashboard-list-head"><div><p class="eyebrow dark"><span></span> LỊCH SẮP TỚI</p><h2>Booking gần nhất</h2></div><a class="text-link" asp-controller="Bookings" asp-action="Index">Xem tất cả →</a></div>
+    @if (!Model.UpcomingBookings.Any())
+    {
+        <div class="empty-state"><strong>Chưa có booking sắp tới.</strong><span>Lịch sân sẽ xuất hiện ở đây.</span></div>
+    }
+    else
+    {
+        <div class="booking-list dashboard-bookings"><table class="booking-table"><thead><tr><th>Sân</th><th>Ngày</th><th>Giờ</th><th>Trạng thái</th><th>Giá</th></tr></thead><tbody>
+        @foreach (var booking in Model.UpcomingBookings)
+        {
+            <tr class="booking-row"><td><strong>@booking.CourtName</strong><small>Mã đặt #@booking.BookingId</small></td><td><strong>@booking.BookingDate.ToString("dd/MM/yyyy")</strong></td><td><strong>@booking.StartTime - @booking.EndTime</strong></td><td><span class="status-badge @(booking.Status == "Pending" ? "bg-warning" : "bg-success")">@booking.Status</span></td><td><strong class="price-text">@booking.TotalPrice.ToString("N0") đ</strong></td></tr>
+        }
+        </tbody></table></div>
+    }
+</section>

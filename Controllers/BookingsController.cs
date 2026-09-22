@@ -21,6 +21,15 @@ public class BookingsController(
         return View(bookings);
     }
 
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Confirm(long id, CancellationToken ct)
+    {
+        await bookingService.ConfirmAsync(id, ct);
+        return RedirectToAction(nameof(Index));
+    }
+
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> Create(long? courtId, CancellationToken ct)
     {

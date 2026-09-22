@@ -88,6 +88,19 @@ public sealed class BookingService(AppDbContext db) : IBookingService
     return (await GetByIdAsync(entity.BookingId, ct))!;
 }
 
+    public async Task<bool> ConfirmAsync(long id, CancellationToken ct)
+    {
+        var entity = await db.Bookings.FindAsync([id], ct);
+        if (entity is null || entity.Status != BookingStatus.Pending) return false;
+
+        var bookingEnd = entity.BookingDate.ToDateTime(entity.EndTime);
+        if (bookingEnd <= DateTime.Now) return false;
+
+        entity.Status = BookingStatus.Confirmed;
+        await db.SaveChangesAsync(ct);
+        return true;
+    }
+
     public async Task<bool> CancelAsync(long id, string userId, bool isAdmin, CancellationToken ct)
     {
         var entity = await db.Bookings.FindAsync([id], ct);
