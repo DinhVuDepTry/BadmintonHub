@@ -84,6 +84,18 @@ $env:ConnectionStrings__BadmintonDb = "Server=<mysql-host>;Port=3306;Database=ba
 dotnet ef database update --configuration Release
 ```
 
+Để bật email quên mật khẩu, cấu hình SMTP bằng biến môi trường hoặc User Secrets:
+
+```powershell
+dotnet user-secrets set "Email:SmtpHost" "smtp.gmail.com"
+dotnet user-secrets set "Email:SmtpPort" "587"
+dotnet user-secrets set "Email:Username" "your-account@gmail.com"
+dotnet user-secrets set "Email:Password" "<gmail-app-password>"
+dotnet user-secrets set "Email:From" "your-account@gmail.com"
+```
+
+Production dùng tên biến tương ứng dạng `Email__SmtpHost`, `Email__SmtpPort`, `Email__Username`, `Email__Password` và `Email__From`. Gmail cần App Password, không dùng mật khẩu tài khoản chính. Khi chưa cấu hình SMTP, ứng dụng vẫn hiển thị phản hồi bảo mật bình thường nhưng không gửi email thật.
+
 Sau khi reverse proxy cấu hình HTTPS, kiểm tra `https://your-domain.com/health`. Health check trả `200` khi ứng dụng kết nối được database và `503` khi database không khả dụng. Swagger chỉ bật trong Development; không mở Swagger công khai ở Production.
 
 ## Phân quyền (RBAC)
