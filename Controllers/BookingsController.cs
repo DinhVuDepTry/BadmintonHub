@@ -23,7 +23,9 @@ public class BookingsController(
 
     public async Task<IActionResult> Create(CancellationToken ct)
     {
-        ViewBag.Courts = await courtService.GetAllAsync(ct);
+        ViewBag.Courts = (await courtService.GetAllAsync(ct))
+            .Where(c => c.Status == Models.Enums.CourtStatus.Active)
+            .ToList();
         return View();
     }
 
@@ -32,7 +34,7 @@ public class BookingsController(
 public async Task<IActionResult> Cancel(long id, CancellationToken ct)
 {
     var userId = userManager.GetUserId(User)!;
-    await bookingService.CancelAsync(id, userId, ct);
+    await bookingService.CancelAsync(id, userId, User.IsInRole("Admin"), ct);
     return RedirectToAction(nameof(Index));
 }
 
@@ -43,7 +45,9 @@ public async Task<IActionResult> Cancel(long id, CancellationToken ct)
     {
         if (!ModelState.IsValid)
         {
-            ViewBag.Courts = await courtService.GetAllAsync(ct);
+            ViewBag.Courts = (await courtService.GetAllAsync(ct))
+                .Where(c => c.Status == Models.Enums.CourtStatus.Active)
+                .ToList();
             return View(dto);
         }
 
@@ -56,7 +60,9 @@ public async Task<IActionResult> Cancel(long id, CancellationToken ct)
         catch (Exception ex)
         {
             ModelState.AddModelError("", ex.Message);
-            ViewBag.Courts = await courtService.GetAllAsync(ct);
+            ViewBag.Courts = (await courtService.GetAllAsync(ct))
+                .Where(c => c.Status == Models.Enums.CourtStatus.Active)
+                .ToList();
             return View(dto);
         }
     }

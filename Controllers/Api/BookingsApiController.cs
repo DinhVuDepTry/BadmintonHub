@@ -53,7 +53,7 @@ public async Task<ActionResult<BookingResponseDto>> GetById(long id, Cancellatio
     public async Task<IActionResult> Cancel(long id, CancellationToken ct)
     {
         var userId = userManager.GetUserId(User)!;
-        var success = await bookingService.CancelAsync(id, userId, ct);
+        var success = await bookingService.CancelAsync(id, userId, User.IsInRole("Admin"), ct);
         return success ? NoContent() : NotFound();
     }
 }

@@ -39,8 +39,18 @@ public sealed class BookingService(AppDbContext db) : IBookingService
     var court = await db.Courts.FindAsync([dto.CourtId], ct)
         ?? throw new KeyNotFoundException("Court does not exist.");
 
+    if (court.Status != CourtStatus.Active)
+        throw new InvalidOperationException("This court is not available for booking.");
+
+    var today = DateOnly.FromDateTime(DateTime.Now);
+    if (dto.BookingDate < today)
+        throw new InvalidOperationException("Booking date must be today or later.");
+
     if (dto.EndTime <= dto.StartTime)
         throw new InvalidOperationException("End time must be after start time.");
+
+    if (dto.BookingDate == today && dto.StartTime <= TimeOnly.FromDateTime(DateTime.Now))
+        throw new InvalidOperationException("Booking time must be in the future.");
 
     await using var transaction = await db.Database.BeginTransactionAsync(ct);
 
@@ -78,10 +88,11 @@ public sealed class BookingService(AppDbContext db) : IBookingService
     return (await GetByIdAsync(entity.BookingId, ct))!;
 }
 
-    public async Task<bool> CancelAsync(long id, string customerId, CancellationToken ct)
+    public async Task<bool> CancelAsync(long id, string userId, bool isAdmin, CancellationToken ct)
     {
         var entity = await db.Bookings.FindAsync([id], ct);
-        if (entity is null || entity.CustomerId != customerId) return false;
+        if (entity is null || (!isAdmin && entity.CustomerId != userId)) return false;
+        if (entity.Status is not (BookingStatus.Pending or BookingStatus.Confirmed)) return false;
 
         entity.Status = BookingStatus.Cancelled;
         await db.SaveChangesAsync(ct);
