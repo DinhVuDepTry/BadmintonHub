@@ -7,11 +7,21 @@ namespace BadmintonHub.Controllers;
 
 public class CourtsController(ICourtService service) : Controller
 {
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index(
+        DateOnly? date, TimeOnly? startTime, TimeOnly? endTime, CancellationToken ct)
     {
-        var courts = await service.GetAllAsync(ct);
+        var hasSearch = date.HasValue || startTime.HasValue || endTime.HasValue;
+        var courts = hasSearch
+            ? await service.GetAvailableAsync(date, startTime, endTime, ct)
+            : await service.GetAllAsync(ct);
+
         if (!User.IsInRole("Admin"))
             courts = courts.Where(c => c.Status == Models.Enums.CourtStatus.Active).ToList();
+
+        ViewBag.SearchDate = date?.ToString("yyyy-MM-dd");
+        ViewBag.SearchStartTime = startTime?.ToString("HH:mm");
+        ViewBag.SearchEndTime = endTime?.ToString("HH:mm");
+        ViewBag.HasSearch = hasSearch;
         return View(courts);
     }
 

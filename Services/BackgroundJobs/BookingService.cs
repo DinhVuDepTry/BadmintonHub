@@ -94,6 +94,9 @@ public sealed class BookingService(AppDbContext db) : IBookingService
         if (entity is null || (!isAdmin && entity.CustomerId != userId)) return false;
         if (entity.Status is not (BookingStatus.Pending or BookingStatus.Confirmed)) return false;
 
+        var bookingStart = entity.BookingDate.ToDateTime(entity.StartTime);
+        if (bookingStart <= DateTime.Now.AddHours(2)) return false;
+
         entity.Status = BookingStatus.Cancelled;
         await db.SaveChangesAsync(ct);
         return true;

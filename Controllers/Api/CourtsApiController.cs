@@ -13,9 +13,12 @@ public class CourtsApiController(ICourtService service) : ControllerBase
 {
     // Ai cũng xem được danh sách sân (kể cả khách chưa login, nếu muốn public thì bỏ [Authorize])
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<CourtResponseDto>>> GetAll(CancellationToken ct)
+    public async Task<ActionResult<IReadOnlyList<CourtResponseDto>>> GetAll(
+        DateOnly? date, TimeOnly? startTime, TimeOnly? endTime, CancellationToken ct)
     {
-        var courts = await service.GetAllAsync(ct);
+        var courts = date.HasValue || startTime.HasValue || endTime.HasValue
+            ? await service.GetAvailableAsync(date, startTime, endTime, ct)
+            : await service.GetAllAsync(ct);
         return Ok(User.IsInRole("Admin") ? courts : courts.Where(c => c.Status == Models.Enums.CourtStatus.Active));
     }
 

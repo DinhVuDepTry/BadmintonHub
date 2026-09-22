@@ -6,6 +6,14 @@
     <p>Tất cả sân đang hoạt động, giá minh bạch và sẵn sàng chờ bạn.</p>
 </section>
 
+<form method="get" class="availability-filter">
+    <div><label for="date">Ngày</label><input id="date" name="date" type="date" value="@ViewBag.SearchDate" /></div>
+    <div><label for="startTime">Bắt đầu</label><input id="startTime" name="startTime" type="time" value="@ViewBag.SearchStartTime" /></div>
+    <div><label for="endTime">Kết thúc</label><input id="endTime" name="endTime" type="time" value="@ViewBag.SearchEndTime" /></div>
+    <button type="submit" class="btn btn-lime">Tìm sân trống <span>↗</span></button>
+    @if (ViewBag.HasSearch == true) { <a class="filter-reset" asp-action="Index">Xóa bộ lọc</a> }
+</form>
+
 @if (User.IsInRole("Admin"))
 {
     <a class="btn btn-dark-pill mb-4" asp-action="Create">+ Thêm sân mới</a>
@@ -18,7 +26,7 @@
 
 @if (!Model.Any())
 {
-    <div class="empty-state"><strong>Chưa có sân nào.</strong><span>Hãy thêm sân đầu tiên để bắt đầu.</span></div>
+    <div class="empty-state"><strong>@(ViewBag.HasSearch == true ? "Không có sân trống trong khung giờ này." : "Chưa có sân nào.")</strong><span>@(ViewBag.HasSearch == true ? "Thử chọn thời gian khác để tìm sân phù hợp." : "Hãy thêm sân đầu tiên để bắt đầu.")</span></div>
 }
 else
 {
@@ -29,6 +37,10 @@ else
                 <div class="court-card-top"><span class="court-number">@c.CourtCode</span><span class="status-pill status-@c.Status.ToString().ToLowerInvariant()">@c.Status</span></div>
                 <div class="court-art"><span>BADMINTON</span><strong>@c.CourtName</strong><i>↗</i></div>
                 <div class="court-card-info"><div><small>LOẠI SÂN</small><strong>@c.CourtType</strong></div><div class="price"><small>GIÁ / GIỜ</small><strong>@c.PricePerHour.ToString("N0") <small>đ</small></strong></div></div>
+                @if (c.Status == BadmintonHub.Models.Enums.CourtStatus.Active && User.IsInRole("Customer"))
+                {
+                    <a class="btn btn-lime court-book-button" asp-controller="Bookings" asp-action="Create" asp-route-courtId="@c.CourtId">Đặt sân này <span>↗</span></a>
+                }
                 @if (User.IsInRole("Admin"))
                 {
                     <div class="court-admin-actions">

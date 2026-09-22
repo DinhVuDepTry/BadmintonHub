@@ -21,11 +21,12 @@ public class BookingsController(
         return View(bookings);
     }
 
-    public async Task<IActionResult> Create(CancellationToken ct)
+    public async Task<IActionResult> Create(long? courtId, CancellationToken ct)
     {
         ViewBag.Courts = (await courtService.GetAllAsync(ct))
             .Where(c => c.Status == Models.Enums.CourtStatus.Active)
             .ToList();
+        ViewBag.SelectedCourtId = courtId;
         return View();
     }
 

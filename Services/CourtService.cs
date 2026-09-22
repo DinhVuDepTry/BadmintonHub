@@ -14,6 +14,35 @@ public sealed class CourtService(AppDbContext db) : ICourtService
                 c.CourtId, c.CourtCode, c.CourtName, c.CourtType, c.PricePerHour, c.Status))
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<CourtResponseDto>> GetAvailableAsync(
+        DateOnly? date, TimeOnly? startTime, TimeOnly? endTime, CancellationToken ct)
+    {
+        var query = db.Courts.AsNoTracking()
+            .Where(c => c.Status == Models.Enums.CourtStatus.Active);
+
+        if (date.HasValue && startTime.HasValue && endTime.HasValue)
+        {
+            if (endTime <= startTime)
+                throw new InvalidOperationException("End time must be after start time.");
+
+            var requestedStart = startTime.Value;
+            var requestedEnd = endTime.Value;
+            var requestedDate = date.Value;
+
+            query = query.Where(c => !c.Bookings.Any(b =>
+                b.BookingDate == requestedDate &&
+                b.Status != Models.Enums.BookingStatus.Cancelled &&
+                b.Status != Models.Enums.BookingStatus.Expired &&
+                requestedStart < b.EndTime && requestedEnd > b.StartTime));
+        }
+
+        return await query
+            .OrderBy(c => c.CourtCode)
+            .Select(c => new CourtResponseDto(
+                c.CourtId, c.CourtCode, c.CourtName, c.CourtType, c.PricePerHour, c.Status))
+            .ToListAsync(ct);
+    }
+
     public async Task<CourtResponseDto?> GetByIdAsync(long id, CancellationToken ct) =>
         await db.Courts.AsNoTracking()
             .Where(c => c.CourtId == id)

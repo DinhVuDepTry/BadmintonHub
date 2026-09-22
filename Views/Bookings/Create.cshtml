@@ -11,7 +11,7 @@
         <select asp-for="CourtId" class="form-select">
             @foreach (var c in (IEnumerable<BadmintonHub.ViewModels.CourtResponseDto>)ViewBag.Courts)
             {
-                <option value="@c.CourtId">@c.CourtName (@c.PricePerHour.ToString("N0") đ/giờ)</option>
+                <option value="@c.CourtId" selected="@(ViewBag.SelectedCourtId == c.CourtId ? "selected" : null)">@c.CourtName (@c.PricePerHour.ToString("N0") đ/giờ)</option>
             }
         </select>
     </div>
