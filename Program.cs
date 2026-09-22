@@ -22,7 +22,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     {
         options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequiredLength = 6;
+        options.Password.RequiredLength = 8;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireDigit = true;
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
@@ -82,8 +86,9 @@ app.UseExceptionHandler(errApp =>
         };
 
         context.Response.StatusCode = status;
-        context.Response.ContentType = "application/json";
-        await context.Response.WriteAsJsonAsync(new { title, detail = ex?.Message });
+context.Response.ContentType = "application/json";
+var detail = status == 500 ? "An unexpected error occurred." : ex?.Message;
+await context.Response.WriteAsJsonAsync(new { title, detail });
     });
 });
 
