@@ -56,7 +56,15 @@ public class RegisterModel(
 
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(user, "Customer");
+            var roleResult = await userManager.AddToRoleAsync(user, "Customer");
+            if (!roleResult.Succeeded)
+            {
+                await userManager.DeleteAsync(user);
+                foreach (var error in roleResult.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+                return Page();
+            }
+
             logger.LogInformation("User created a new account.");
             await signInManager.SignInAsync(user, isPersistent: false);
             return LocalRedirect(returnUrl ?? Url.Content("~/"));

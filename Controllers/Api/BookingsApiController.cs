@@ -53,6 +53,7 @@ public async Task<ActionResult<BookingResponseDto>> GetById(long id, Cancellatio
     }
 
     [HttpDelete("{id:long}")]
+    [Authorize(Roles = "Admin,Customer")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Cancel(long id, CancellationToken ct)
     {

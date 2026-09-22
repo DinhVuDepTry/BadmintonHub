@@ -118,6 +118,8 @@ VALUES ('<user-id>', '<role-id>');
 | CourtOwner | (dự phòng mở rộng — hiện dùng chung quyền với Admin ở mức Court) |
 | Customer | Đặt sân, xem/hủy booking của chính mình |
 
+Mọi route MVC và API đều kiểm tra role ở controller; việc kiểm tra quyền sở hữu booking vẫn được thực hiện thêm trong service để tránh IDOR.
+
 ## API endpoints chính
 
 | Method | Endpoint | Quyền | Mô tả |

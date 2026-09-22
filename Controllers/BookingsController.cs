@@ -7,7 +7,7 @@ using BadmintonHub.ViewModels;
 
 namespace BadmintonHub.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin,Customer")]
 public class BookingsController(
     IBookingService bookingService,
     ICourtService courtService,
@@ -21,6 +21,7 @@ public class BookingsController(
         return View(bookings);
     }
 
+    [Authorize(Roles = "Customer")]
     public async Task<IActionResult> Create(long? courtId, CancellationToken ct)
     {
         ViewBag.Courts = (await courtService.GetAllAsync(ct))
@@ -31,6 +32,7 @@ public class BookingsController(
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,Customer")]
 [ValidateAntiForgeryToken]
 public async Task<IActionResult> Cancel(long id, CancellationToken ct)
 {
@@ -41,6 +43,7 @@ public async Task<IActionResult> Cancel(long id, CancellationToken ct)
 
 
     [HttpPost]
+    [Authorize(Roles = "Customer")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(BookingCreateDto dto, CancellationToken ct)
     {
