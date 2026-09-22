@@ -2,7 +2,7 @@
 @{ ViewData["Title"] = "Khám phá sân"; }
 
 <section class="page-heading">
-    <div><p class="eyebrow dark"><span></span> BADMINTONHUB / ĐỊA ĐIỂM</p><h1>Chọn sân cho<br /><em>trận đấu tiếp theo.</em></h1></div>
+    <div><p class="eyebrow dark"><span></span> BADMINTONHUB / @(User.IsInRole("Admin") ? "COURT MANAGEMENT" : "ĐỊA ĐIỂM")</p><h1>@if (User.IsInRole("Admin")) { <text>Điều hành<br /><em>mọi sân đấu.</em></text> } else { <text>Chọn sân cho<br /><em>trận đấu tiếp theo.</em></text> }</h1></div>
     <p>Tất cả sân đang hoạt động, giá minh bạch và sẵn sàng chờ bạn.</p>
 </section>
 
@@ -16,7 +16,7 @@
 
 @if (User.IsInRole("Admin"))
 {
-    <a class="btn btn-dark-pill mb-4" asp-action="Create">+ Thêm sân mới</a>
+    <div class="management-toolbar court-toolbar"><span><strong>@Model.Count</strong> sân trong hệ thống</span><a class="btn btn-dark-pill" asp-action="Create">+ Thêm sân mới</a></div>
 }
 
 @if (TempData["Error"] != null)

@@ -2,19 +2,19 @@
 @{ ViewData["Title"] = "Admin dashboard"; }
 
 <section class="page-heading compact-heading">
-    <div><p class="eyebrow dark"><span></span> BADMINTONHUB / ADMIN</p><h1>Hôm nay có gì<br /><em>trên sân?</em></h1></div>
-    <a class="btn btn-lime" asp-controller="Bookings" asp-action="Index">Quản lý booking <span>↗</span></a>
+    <div><p class="eyebrow dark"><span></span> BADMINTONHUB / CONTROL ROOM</p><h1>Hôm nay có gì<br /><em>trên sân?</em></h1><p class="heading-subtitle">Một góc nhìn nhanh để bạn điều phối sân, booking và doanh thu trong ngày.</p></div>
+    <div class="management-actions"><a class="btn btn-lime" asp-controller="Bookings" asp-action="Index">Quản lý booking <span>↗</span></a><a class="btn btn-dark-pill" asp-controller="Courts" asp-action="Index">Quản lý sân</a></div>
 </section>
 
 <section class="dashboard-grid">
-    <article class="dashboard-stat"><span>SÂN ĐANG HOẠT ĐỘNG</span><strong>@Model.ActiveCourtCount</strong><small>có thể đặt ngay</small></article>
-    <article class="dashboard-stat dashboard-stat-accent"><span>CHỜ XÁC NHẬN</span><strong>@Model.PendingBookingCount</strong><small>cần xử lý</small></article>
-    <article class="dashboard-stat"><span>BOOKING HÔM NAY</span><strong>@Model.TodayBookingCount</strong><small>không tính booking đã hủy</small></article>
-    <article class="dashboard-stat dashboard-stat-revenue"><span>DOANH THU HÔM NAY</span><strong>@Model.TodayRevenue.ToString("N0")</strong><small>VNĐ</small></article>
+    <article class="dashboard-stat"><div class="stat-label"><span class="stat-icon">◌</span><span>SÂN ĐANG HOẠT ĐỘNG</span></div><strong>@Model.ActiveCourtCount</strong><small>có thể đặt ngay</small></article>
+    <article class="dashboard-stat dashboard-stat-accent"><div class="stat-label"><span class="stat-icon">!</span><span>CHỜ XÁC NHẬN</span></div><strong>@Model.PendingBookingCount</strong><small>cần xử lý</small></article>
+    <article class="dashboard-stat"><div class="stat-label"><span class="stat-icon">◷</span><span>BOOKING HÔM NAY</span></div><strong>@Model.TodayBookingCount</strong><small>không tính booking đã hủy</small></article>
+    <article class="dashboard-stat dashboard-stat-revenue"><div class="stat-label"><span class="stat-icon">₫</span><span>DOANH THU HÔM NAY</span></div><strong>@Model.TodayRevenue.ToString("N0")</strong><small>VNĐ</small></article>
 </section>
 
 <section class="dashboard-list">
-    <div class="dashboard-list-head"><div><p class="eyebrow dark"><span></span> LỊCH SẮP TỚI</p><h2>Booking gần nhất</h2></div><a class="text-link" asp-controller="Bookings" asp-action="Index">Xem tất cả →</a></div>
+    <div class="dashboard-list-head"><div><p class="eyebrow dark"><span></span> LỊCH SẮP TỚI</p><h2>Booking gần nhất</h2><p class="section-hint">Các lịch đặt tiếp theo cần được theo dõi.</p></div><a class="text-link" asp-controller="Bookings" asp-action="Index">Xem tất cả →</a></div>
     @if (!Model.UpcomingBookings.Any())
     {
         <div class="empty-state"><strong>Chưa có booking sắp tới.</strong><span>Lịch sân sẽ xuất hiện ở đây.</span></div>

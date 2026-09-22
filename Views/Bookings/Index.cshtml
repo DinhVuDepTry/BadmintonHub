@@ -9,6 +9,11 @@
     }
 </section>
 
+@if (isAdmin)
+{
+    <div class="management-toolbar"><span><strong>@Model.Count</strong> booking trong hệ thống</span><span class="toolbar-key"><i></i> Cần xử lý = Pending</span></div>
+}
+
 @if (!Model.Any())
 {
     <div class="empty-state"><strong>Chưa có lịch đặt sân nào.</strong><span>Khung giờ đẹp đang chờ bạn chọn.</span><a class="text-link" asp-action="Create">Đặt sân ngay →</a></div>
@@ -36,6 +41,7 @@ else
                 <td><span class="status-badge @badgeClass">@b.Status</span></td>
                 <td><strong class="price-text">@b.TotalPrice.ToString("N0") đ</strong></td>
                 <td class="booking-action">
+                <div class="booking-actions">
                 @if (isAdmin && b.Status == "Pending")
                 {
                     <form asp-action="Confirm" asp-route-id="@b.BookingId" method="post">
@@ -48,6 +54,7 @@ else
                         <button type="submit" class="btn btn-sm btn-outline-danger">Hủy đặt</button>
                     </form>
                 }
+                </div>
                 </td>
             </tr>
         }
